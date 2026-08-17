@@ -10,4 +10,4 @@ router.get('getuser/:id', verifyadmin, getUserbyId)
 
 
 
-module.exports = router
+module.exports = router;

@@ -16,4 +16,4 @@ const validateuser = (user) =>{
     return UserSChema.validate(user)
 }
 
-module.exports = validateuser
+module.exports = validateuser;

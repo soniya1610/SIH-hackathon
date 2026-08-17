@@ -1,21 +1,37 @@
-const twilio = require('twilio');
-const dotenv = require('dotenv');
-dotenv.config({ path: './.env' });
-
-const trimmedVerifySid = process.env.TWILIO_VERIFY_SID ? process.env.TWILIO_VERIFY_SID.trim() : '';
-
-const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+const otpStore = require("./otpStore");
 
 const verifyOTP = async (phone, otp) => {
-  if (!trimmedVerifySid) {
-    throw new Error("TWILIO_VERIFY_SID is not set or empty after trimming");
+  const storedData = otpStore.get(phone);
+
+  // No OTP found
+  if (!storedData) {
+    return {
+      status: "pending",
+    };
   }
-  return await client.verify.v2
-    .services(trimmedVerifySid)
-    .verificationChecks.create({
-      to: `+91${phone}`,
-      code: otp,
-    });
+
+  // OTP expired
+  if (Date.now() > storedData.expiresAt) {
+    otpStore.delete(phone);
+
+    return {
+      status: "pending",
+    };
+  }
+
+  // OTP doesn't match
+  if (storedData.otp !== otp.toString()) {
+    return {
+      status: "pending",
+    };
+  }
+
+  // OTP is correct
+  otpStore.delete(phone);
+
+  return {
+    status: "approved",
+  };
 };
 
 module.exports = verifyOTP;

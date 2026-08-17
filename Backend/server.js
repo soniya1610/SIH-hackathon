@@ -1,28 +1,39 @@
-const express = require("express")
-const mongoose = require("mongoose")
-const dotenv = require("dotenv")
-const AuthRouter = require('./routes/auth')
-const AddressRouter = require('./routes/address')
-const UserRouter = require('./routes/user')
-const MediaRouter = require('./routes/media')
-const AssessmentRouter = require('./routes/assessment')
+const express = require("express");
+const dotenv = require("dotenv");
+const pool = require("./config/db");
 
-const app = express()
-app.use(express.json())
+const AuthRouter = require("./routes/auth");
+const AddressRouter = require("./routes/address");
+const UserRouter = require("./routes/user");
+const MediaRouter = require("./routes/media");
+const AssessmentRouter = require("./routes/assessment");
 
-dotenv.config()
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("Connected to Mongodb successfully"))
-    .catch(() => console.log("Connection failed"));
+dotenv.config();
 
-app.use('/auth', AuthRouter);
-app.use('/address', AddressRouter)
-app.use('/user', UserRouter)
-app.use('/media', MediaRouter)
-app.use('/assessment', AssessmentRouter)
+const app = express();
 
+app.use(express.json());
 
+// Test MySQL connection
+pool.getConnection()
+    .then(connection => {
+        console.log("Connected to MySQL successfully");
+        connection.release();
+    })
+    .catch(error => {
+        console.error("MySQL connection failed:", error.message);
+    });
 
-app.listen(process.env.PORT || 3001  , ()=>{
-    console.log(`Server is running on http://localhost:${process.env.PORT || 3001}`)
-})
+// Routes
+app.use("/auth", AuthRouter);
+app.use("/address", AddressRouter);
+app.use("/user", UserRouter);
+app.use("/media", MediaRouter);
+app.use("/assessment", AssessmentRouter);
+
+// Start server
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${8080}`);
+});
