@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, AlertTriangle, Trophy, Download, Check, X } from "lucide-react";
 
 // FIX 1: Named import use karein Vite bundles ke liye
-import { jsPDF } from "jspdf";
+import { jsPDF } from "jspdf"; 
 
 import PerformanceAnalysisCard from "@/components/performance/PerformanceAnalysisCard";
 
