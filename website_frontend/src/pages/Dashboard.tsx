@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
 import { Users, AlertTriangle, Trophy, Download, Check, X } from "lucide-react";
+
+// FIX 1: Named import use karein Vite bundles ke liye
+import { jsPDF } from "jspdf";
 
 import PerformanceAnalysisCard from "@/components/performance/PerformanceAnalysisCard";
 
@@ -56,13 +57,68 @@ const recentActions = [
 ];
 
 export default function Dashboard() {
+  const exportReport = () => {
+    try {
+      // FIX 2: Explicit orientation, unit, format and text color set karein
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      // Explicitly set text color to Black (RGB: 0, 0, 0)
+      pdf.setTextColor(0, 0, 0);
+
+      // Title
+      pdf.setFontSize(22);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Sports Performance Report", 20, 25);
+
+      // Subtitle
+      pdf.setFontSize(14);
+      pdf.setFont("helvetica", "normal");
+      pdf.text("Performance Analysis", 20, 40);
+
+      // Performance Data
+      pdf.setFontSize(12);
+      pdf.text("Exercise: Squats", 20, 55);
+      pdf.text("Overall Score: 85 / 100", 20, 65);
+      pdf.text("Form: 88%", 20, 75);
+      pdf.text("Accuracy: 84%", 20, 85);
+      pdf.text("Performance: Good", 20, 95);
+
+      // AI Feedback
+      pdf.setFontSize(14);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("AI Feedback", 20, 115);
+
+      pdf.setFontSize(11);
+      pdf.setFont("helvetica", "normal");
+      pdf.text("Good performance! Maintain proper body alignment", 20, 125);
+      pdf.text(
+        "and focus on consistent movement throughout the exercise.",
+        20,
+        133,
+      );
+
+      // Date
+      pdf.setFontSize(10);
+      pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 155);
+
+      // Trigger download
+      pdf.save("Sports_Performance_Report.pdf");
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Dashboard Overview</h1>
 
-        <Button>
+        <Button onClick={exportReport}>
           <Download className="mr-2 h-4 w-4" />
           Export Report
         </Button>
