@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const upload = require("../middleware/muter2");
+const upload = require("../middleware/multer2");
 const verifytoken = require("../middleware/verifytoken");
 
 const {
